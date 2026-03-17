@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics Redesign — Elliot Crumpley</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f0e0c;
+  --paper:#f5f2ed;
+  --accent:#d85a30;
+  --accent2:#1D9E75;
+  --mid:#888780;
+  --light:#e2dfd8;
+  --white:#ffffff;
+  --blue:#185FA5;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;font-size:16px}
+a{color:inherit;text-decoration:none}
+
+nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 3rem;border-bottom:1.5px solid var(--ink);position:sticky;top:0;background:var(--paper);z-index:100}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:-0.02em}
+.nav-back{font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--mid);font-weight:500;display:flex;align-items:center;gap:0.5rem;transition:color 0.2s}
+.nav-back:hover{color:var(--ink)}
+
+.hero{padding:5rem 3rem 4rem;border-bottom:1.5px solid var(--ink)}
+.hero-meta{display:flex;gap:0.75rem;align-items:center;margin-bottom:2rem;flex-wrap:wrap}
+.hero-tag{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;padding:0.3rem 0.75rem;border-radius:2px}
+.tag-orange{background:#FAECE7;color:#993C1D}
+.tag-teal{background:#E1F5EE;color:#0F6E56}
+.tag-blue{background:#E6F1FB;color:#185FA5}
+.tag-purple{background:#EEEDFE;color:#3C3489}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:800;line-height:1;letter-spacing:-0.03em;margin-bottom:1.5rem;max-width:22ch}
+.hero-sub{font-size:1.05rem;color:var(--mid);max-width:56ch;line-height:1.75;margin-bottom:2.5rem}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;border:1.5px solid var(--ink);background:var(--ink);max-width:780px}
+.stat-box{background:var(--white);padding:1.25rem 1.5rem}
+.stat-num{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:0.3rem}
+.stat-label{font-size:0.78rem;color:var(--mid);line-height:1.4}
+
+.body-content{max-width:1200px;margin:0 auto;padding:0 3rem}
+.section{padding:4rem 0;border-bottom:1px solid var(--light)}
+.section:last-child{border-bottom:none}
+
+.two-col{display:grid;grid-template-columns:1fr 2fr;gap:4rem;align-items:start}
+.two-col-even{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+
+.label{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;color:var(--accent);margin-bottom:0.75rem}
+.section-title{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:1rem;line-height:1.15}
+.body-text{color:var(--mid);line-height:1.75;font-size:0.975rem}
+
+.callout{border-left:3px solid var(--accent);padding:1rem 1.25rem;background:var(--white);margin:1.5rem 0;border-radius:0 2px 2px 0}
+.callout p{font-size:0.95rem;line-height:1.7;color:var(--ink)}
+.callout strong{color:var(--accent)}
+
+.quote-block{padding:1.5rem 2rem;background:var(--white);border:1.5px solid var(--light);margin:1.5rem 0;position:relative}
+.quote-block::before{content:'\201C';font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:var(--light);position:absolute;top:0.5rem;left:1rem;line-height:1}
+.quote-block p{font-size:0.95rem;font-style:italic;color:var(--ink);line-height:1.7;padding-left:1.5rem}
+.quote-block cite{display:block;font-size:0.78rem;color:var(--mid);margin-top:0.5rem;padding-left:1.5rem;font-style:normal}
+
+.pill-list{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem}
+.pill{font-size:0.78rem;padding:0.3rem 0.75rem;border:1px solid var(--light);color:var(--mid);border-radius:2px;font-weight:500}
+
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border:1.5px solid var(--ink);background:var(--ink);margin-top:2rem}
+.role-cell{background:var(--white);padding:1.5rem}
+.role-cell h4{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem}
+.role-cell p{font-size:0.875rem;color:var(--mid);line-height:1.65}
+
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--ink);border:1.5px solid var(--ink);margin-top:2rem}
+.step{background:var(--paper);padding:1.5rem}
+.step-num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--light);margin-bottom:0.75rem;line-height:1}
+.step-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.4rem}
+.step-desc{font-size:0.83rem;color:var(--mid);line-height:1.6}
+
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--ink);border:1.5px solid var(--ink);margin-top:2rem}
+.ba-col{padding:1.75rem;background:var(--white)}
+.ba-col.before{background:#FEF6F0}
+.ba-col h4{font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem}
+.ba-col.before h4{color:#993C1D}
+.ba-col.after h4{color:#0F6E56}
+.ba-item{font-size:0.875rem;color:var(--mid);padding:0.5rem 0;border-bottom:1px solid var(--light);line-height:1.5}
+.ba-item:last-child{border-bottom:none}
+.ba-item strong{color:var(--ink);font-weight:500}
+
+.nav-table{width:100%;border-collapse:collapse;margin-top:1.5rem;font-size:0.875rem}
+.nav-table th{text-align:left;font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;padding:0.75rem 1rem;border-bottom:2px solid var(--ink);color:var(--mid)}
+.nav-table td{padding:0.75rem 1rem;border-bottom:1px solid var(--light);vertical-align:top;line-height:1.5}
+.nav-table tr:last-child td{border-bottom:none}
+.nav-table td:first-child{color:var(--mid);font-style:italic}
+.nav-table td:last-child{color:var(--ink)}
+.nav-table tr:nth-child(even) td{background:rgba(255,255,255,0.5)}
+
+.outcome-card{background:var(--white);border:1.5px solid var(--ink);padding:1.75rem}
+.outcome-icon{width:32px;height:32px;border-radius:50%;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.75rem}
+.outcome-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.5rem}
+.outcome-desc{font-size:0.875rem;color:var(--mid);line-height:1.65}
+
+.divider{width:40px;height:3px;background:var(--accent);margin:1.25rem 0}
+
+.user-need-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1.5rem}
+.user-need{background:var(--white);border:1.5px solid var(--light);padding:1.5rem}
+.user-need-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem}
+.user-need-badge{font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:2px;font-weight:600}
+.badge-m{background:#E6F1FB;color:#185FA5}
+.badge-d{background:#EEEDFE;color:#3C3489}
+.badge-r{background:#E1F5EE;color:#0F6E56}
+.user-need p{font-size:0.85rem;color:var(--mid);line-height:1.65}
+
+.impact-note{background:var(--ink);color:var(--paper);padding:2rem 2.5rem;margin-top:2rem;border-radius:2px}
+.impact-note p{font-size:1rem;line-height:1.75;max-width:62ch}
+.impact-note strong{color:var(--accent)}
+
+footer{border-top:1.5px solid var(--ink);padding:1.5rem 3rem;display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;color:var(--mid)}
+footer strong{font-family:'Syne',sans-serif;color:var(--ink);font-weight:700}
+
+@media(max-width:768px){
+  nav,.hero,footer{padding-left:1.25rem;padding-right:1.25rem}
+  .body-content{padding:0 1.25rem}
+  .two-col,.two-col-even,.three-col,.role-grid,.process-steps,.before-after,.user-need-grid,.hero-stats{grid-template-columns:1fr}
+  .hero-stats{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">EC</span>
+  <a href="index.html" class="nav-back">← Back to portfolio</a>
+</nav>
+
+<section class="hero">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="hero-meta">
+      <span class="hero-tag tag-orange">UX writing</span>
+      <span class="hero-tag tag-teal">Content strategy</span>
+      <span class="hero-tag tag-blue">Information architecture</span>
+      <span class="hero-tag tag-purple">Scalable systems</span>
+      <span style="font-size:0.8rem;color:var(--mid)">Expedia Group · 2020</span>
+    </div>
+    <h1>Rethinking Analytics — from internal jargon to partner language</h1>
+    <p class="hero-sub">A ground-up content redesign of Expedia Group's hotel analytics product: auditing 50+ screens of jargon-heavy data, rebuilding the information architecture around partner mental models, and creating a scalable content system that outlived the project itself.</p>
+    <div class="hero-stats">
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--accent)">100%</div>
+        <div class="stat-label">Partner approval rate in user testing</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--accent2)">$120M</div>
+        <div class="stat-label">Revenue in year one after implementation</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--blue)">10.2%</div>
+        <div class="stat-label">Increase in market penetration</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:#3C3489">70k+</div>
+        <div class="stat-label">Hotel partners reached via the content component library</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="body-content">
+
+  <!-- OVERVIEW -->
+  <div class="section">
+    <div class="two-col">
+      <div>
+        <p class="label">Overview</p>
+        <h2 class="section-title">An analytics product that spoke Expedia's language, not the partner's</h2>
+        <div class="divider"></div>
+      </div>
+      <div>
+        <p class="body-text">Expedia Group's Analytics section in Partner Central gave hotel partners access to performance data — but the experience had accumulated years of internal terminology, fragmented navigation, and data without context. Partners couldn't find what they needed, didn't trust what they saw, and were spending hours manually cross-checking Expedia's numbers against their own sources.</p>
+        <p class="body-text" style="margin-top:1rem">Terms like "Competitiveness," "Production," "Net Room Nights," and "Offer strength" made sense to Expedia's product teams but were opaque to the hotel managers and revenue teams who depended on the tool daily. The navigation mirrored Expedia's internal product structure — not how partners actually thought about their business.</p>
+        <p class="body-text" style="margin-top:1rem">In early 2020, the team undertook a full redesign. I led the content design effort: auditing the existing experience, rebuilding the IA from research findings, defining data visualization principles, and creating a content system scalable enough to extend across all of Partner Central.</p>
+        <div class="pill-list">
+          <span class="pill">Content audit</span>
+          <span class="pill">Generative research</span>
+          <span class="pill">Terminology overhaul</span>
+          <span class="pill">IA redesign</span>
+          <span class="pill">Data viz principles</span>
+          <span class="pill">Scalable content system</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESEARCH -->
+  <div class="section">
+    <p class="label">Research foundation</p>
+    <h2 class="section-title">What 18 partner interviews revealed</h2>
+    <div class="divider"></div>
+    <p class="body-text" style="max-width:64ch;margin-bottom:2rem">A generative research study with 18 partners across EMEA, AMER, and APAC — spanning A, B, and C segments — revealed three distinct modes of analytics use. Critically, segment didn't predict behavior: engagement and ambition did. This reframed how we thought about content and IA.</p>
+    <div class="user-need-grid">
+      <div class="user-need">
+        <div class="user-need-title">
+          <span>Monitoring</span>
+          <span class="user-need-badge badge-m">Daily</span>
+        </div>
+        <p>Partners taking a quick pulse check on their property — visibility, conversions, guests. They want to capture performance at a glance without having to navigate deep. Entry points: Property analytics, Quality score.</p>
+      </div>
+      <div class="user-need">
+        <div class="user-need-title">
+          <span>Deep dive</span>
+          <span class="user-need-badge badge-d">Occasional</span>
+        </div>
+        <p>Partners investigating pricing and visibility strategy, comparing against competitors and the same period last year. They play with filters to answer specific questions. Entry points: Visibility, Conversion.</p>
+      </div>
+      <div class="user-need">
+        <div class="user-need-title">
+          <span>Reporting</span>
+          <span class="user-need-badge badge-r">Periodic</span>
+        </div>
+        <p>Partners exporting data to share with staff or cross-reference with other sources before major reporting periods. They need a customisable, trustworthy export they can actually use in business meetings.</p>
+      </div>
+    </div>
+
+    <div class="quote-block" style="margin-top:2rem">
+      <p>Analytics section is vital for me, it tells me what's wrong and then the marketing section offers me the opportunity to drive actions to help the business to capture more occupancy... Even if we're a small property we can compete effectively.</p>
+      <cite>— Partner interview participant (Hoss)</cite>
+    </div>
+
+    <div class="callout">
+      <p><strong>Key insight from research:</strong> Partners qualified Expedia's information as "fragmented" and wouldn't take action based on it alone. They were manually double-checking data in spreadsheets and doing their own market analysis on Google — not because they lacked sophistication, but because they didn't trust what we showed them.</p>
+    </div>
+  </div>
+
+  <!-- CONTENT AUDIT -->
+  <div class="section">
+    <div class="two-col">
+      <div>
+        <p class="label">Content audit</p>
+        <h2 class="section-title">Auditing 50+ screens for friction points</h2>
+        <div class="divider"></div>
+        <p class="body-text">Before redesigning anything, I conducted a systematic content audit across the entire Analytics space — documenting every label, heading, tooltip, and CTA that created confusion or inconsistency.</p>
+        <p class="body-text" style="margin-top:1rem">The audit uncovered patterns of failure that went beyond individual copy issues: inconsistent capitalisation, internal abbreviations presented as labels, contradictory visual signals (a red upward arrow), and metrics named after Expedia's data models rather than partner business concepts.</p>
+      </div>
+      <div>
+        <div class="before-after">
+          <div class="ba-col before">
+            <h4>Before — internal language</h4>
+            <div class="ba-item"><strong>Offer strength</strong> — partners didn't know what was being measured</div>
+            <div class="ba-item"><strong>Production</strong> — an internal term with no hotel-industry equivalent</div>
+            <div class="ba-item"><strong>Competitiveness</strong> — vague; partners asked "competitive compared to what?"</div>
+            <div class="ba-item"><strong>Net Room Nights</strong> — not how hotel managers track occupancy</div>
+            <div class="ba-item"><strong>Compset ADR</strong> — unexpanded abbreviation unfamiliar to smaller partners</div>
+            <div class="ba-item"><strong>Hotel ADR</strong> — should be "Average daily rate (ADR)" on first use</div>
+          </div>
+          <div class="ba-col after">
+            <h4>After — partner language</h4>
+            <div class="ba-item"><strong>Partner strength</strong> — renamed to reflect the partner's standing</div>
+            <div class="ba-item"><strong>Your visibility</strong> — reframed around what the partner owns and controls</div>
+            <div class="ba-item"><strong>How you compare</strong> — contextualised against competitive set</div>
+            <div class="ba-item"><strong>Room nights booked</strong> — matches how revenue managers speak</div>
+            <div class="ba-item"><strong>Competitive set average daily rate</strong> — spelled out on first use</div>
+            <div class="ba-item"><strong>Sentence case throughout</strong> — applied consistently to all labels and nav items</div>
+          </div>
+        </div>
+        <p class="body-text" style="margin-top:1rem;font-size:0.85rem">Audit also identified: missing periods on instructional copy, inconsistent filter labelling, redundant navigation items, and CTAs with mismatched button/label copy.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- IA REDESIGN -->
+  <div class="section">
+    <p class="label">Information architecture</p>
+    <h2 class="section-title">Rebuilding navigation around partner mental models</h2>
+    <div class="divider"></div>
+    <p class="body-text" style="max-width:64ch;margin-bottom:2rem">The existing Analytics navigation had 12+ L3 items using Expedia-specific terminology. Partners struggled to predict what they'd find behind each label — and the structure didn't map to any of the three use cases the research revealed. I redesigned the IA into four buckets that matched how partners actually think about their business.</p>
+
+    <table class="nav-table">
+      <thead>
+        <tr>
+          <th>Old navigation</th>
+          <th>New navigation</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Property analytics, Offer strength, Quality score, Sort order</td>
+          <td><strong>Your visibility</strong></td>
+          <td>Grouped by the question partners actually ask: "How visible is my property right now and why?"</td>
+        </tr>
+        <tr>
+          <td>Guest value, Booking insights, Guest insights, Guest experience</td>
+          <td><strong>Traveler insights</strong></td>
+          <td>Bundled guest data so partners get a complete picture of who books and why — with one-click promotion creation surfaced in context</td>
+        </tr>
+        <tr>
+          <td>Visibility, Conversion (separate, siloed)</td>
+          <td><strong>Conversions</strong></td>
+          <td>Reframed as the impact of all actions taken — not just a funnel metric — linking partner behaviour to outcomes</td>
+        </tr>
+        <tr>
+          <td>Partner reporting suite, Offer strength (export)</td>
+          <td><strong>Reports</strong></td>
+          <td>A dedicated, customisable export hub — acknowledging that reporting is a distinct job-to-be-done, not an afterthought</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout" style="margin-top:2rem">
+      <p><strong>IA principle:</strong> Instead of asking partners to learn Expedia's taxonomy, we mapped the navigation to the questions partners already arrive with: "How am I performing?", "Who are my guests?", "Are my actions working?", "What can I export?"</p>
+    </div>
+  </div>
+
+  <!-- DATA VIZ PRINCIPLES -->
+  <div class="section">
+    <div class="two-col">
+      <div>
+        <p class="label">Scalable content system</p>
+        <h2 class="section-title">Data visualization principles for the whole platform</h2>
+        <div class="divider"></div>
+        <p class="body-text">One of the most consequential contributions was moving beyond fixing individual screens to establishing principles that could govern how data was communicated across all of Partner Central — not just Analytics.</p>
+        <p class="body-text" style="margin-top:1rem">The core question: when should we use a number vs a bar chart vs a line graph? And how should labelling work consistently regardless of which part of the platform the partner is in?</p>
+      </div>
+      <div>
+        <div class="role-grid" style="grid-template-columns:1fr 1fr">
+          <div class="role-cell">
+            <h4>Right chart for the right context</h4>
+            <p>Defined rules for when to use line graphs (trends over time), bar charts (comparisons at a point in time), and single-number callouts (immediate status metrics). Removed ambiguity for engineers and designers adding new modules.</p>
+          </div>
+          <div class="role-cell">
+            <h4>Labelling that adds context</h4>
+            <p>Every data point needed a label that communicated <em>what it means</em>, not just <em>what it is</em>. Numbers without context create anxiety — numbers with a baseline or trend create confidence.</p>
+          </div>
+          <div class="role-cell">
+            <h4>Actionability over information</h4>
+            <p>Principle: don't surface a metric without surfacing what the partner can do about it. Metrics linked to recommended actions where possible; passive data display was explicitly deprioritised.</p>
+          </div>
+          <div class="role-cell">
+            <h4>Granularity by user need</h4>
+            <p>Monitoring partners need high-level snapshots; deep-dive partners need filter controls and historical comparisons. The content system defined which level of detail belonged at which entry point.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCESS -->
+  <div class="section">
+    <p class="label">Process</p>
+    <h2 class="section-title">From swarm to strategy</h2>
+    <div class="divider"></div>
+    <p class="body-text" style="max-width:64ch;margin-bottom:0">The project ran over several months and moved through four distinct phases, with content design embedded at every stage rather than brought in at the end.</p>
+    <div class="process-steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Generative research</div>
+        <div class="step-desc">Synthesised findings from 18 partner interviews to identify the three use cases (monitoring, deep dive, reporting) and the trust deficit at the heart of the experience.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Content audit</div>
+        <div class="step-desc">Audited 50+ screens for terminology, capitalisation, labelling consistency, and IA problems. Documented every friction point with a specific recommendation.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">IA & vision</div>
+        <div class="step-desc">Rebuilt the navigation structure around partner mental models, defined the four content buckets, and created the "Analytics as a Trusted Friend" north-star vision.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Scalable system</div>
+        <div class="step-desc">Codified data viz principles and content rules that could extend beyond Analytics to all of Partner Central — designed to survive any single product pivot.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NORTH STAR -->
+  <div class="section">
+    <div class="two-col-even">
+      <div>
+        <p class="label">Vision</p>
+        <h2 class="section-title">Analytics as a "Trusted Friend"</h2>
+        <div class="divider"></div>
+        <p class="body-text">The north-star vision I articulated for the project: make Analytics feel like a trusted friend who knows your property, understands your market, and surfaces the right information at the right moment — without requiring the partner to know what to ask for.</p>
+        <p class="body-text" style="margin-top:1rem">This framing shaped every content decision: from the tone of recommendation copy ("Here's what we're seeing in your market" rather than "Your performance is below average") to the structure of the dashboard (leading with actionable insights, not raw data tables).</p>
+        <div class="quote-block" style="margin-top:1.5rem">
+          <p>Give me a better story about my market thanks to the whys behind the displayed figures.</p>
+          <cite>— Partner interview participant (Fernando) — the brief in a single sentence</cite>
+        </div>
+      </div>
+      <div>
+        <p class="label" style="margin-bottom:1rem">Ideal partner experience — three dimensions</p>
+        <div style="display:flex;flex-direction:column;gap:1px;border:1.5px solid var(--ink);background:var(--ink)">
+          <div style="background:var(--white);padding:1.25rem">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;color:var(--accent);margin-bottom:0.5rem">Think</div>
+            <p style="font-size:0.875rem;color:var(--mid);line-height:1.65">I can quickly find data relevant to my property. I'm shown metrics affecting my revenue without having to dig for them. Expedia uses its data to help me generate more revenue through actionable items.</p>
+          </div>
+          <div style="background:var(--white);padding:1.25rem">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;color:var(--blue);margin-bottom:0.5rem">Feel</div>
+            <p style="font-size:0.875rem;color:var(--mid);line-height:1.65">I feel confident in the accuracy of what I'm shown. Expedia has my best interest in mind. My property has a real opportunity to improve through the insights I receive.</p>
+          </div>
+          <div style="background:var(--white);padding:1.25rem">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;color:var(--accent2);margin-bottom:0.5rem">Do</div>
+            <p style="font-size:0.875rem;color:var(--mid);line-height:1.65">Easily export relevant data for my reporting needs. Take actions with the biggest impact on my property. Adjust rates, content, and availability with confidence that the data is accurate.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTCOMES -->
+  <div class="section">
+    <p class="label">Outcomes</p>
+    <h2 class="section-title">What we achieved — and what it became</h2>
+    <div class="divider"></div>
+    <div class="three-col" style="margin-top:1.5rem">
+      <div class="outcome-card">
+        <div class="outcome-icon" style="background:#FAECE7;color:#993C1D">100%</div>
+        <div class="outcome-title">Partner approval in user testing</div>
+        <div class="outcome-desc">Every partner who tested the redesigned experience approved it — a direct result of grounding the content strategy in the three partner modes identified in generative research.</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-icon" style="background:#E1F5EE;color:#0F6E56">$120M</div>
+        <div class="outcome-title">Revenue in year one</div>
+        <div class="outcome-desc">After implementation, the cumulative effect of the new design resulted in $120M in revenue and a 10.2% increase in market penetration — connecting clearer content directly to partner activation and action.</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-icon" style="background:#E6F1FB;color:#185FA5">70k+</div>
+        <div class="outcome-title">Partners reached</div>
+        <div class="outcome-desc">The content component library touched nearly every experience in Partner Central, reaching an audience of over 70,000 hotel partners — and was later repurposed as the content foundation for Virtual Market Coach.</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem">
+      <div class="quote-block">
+        <p>It drives me to actions I could take and takes me specifically to things that I have to do to improve.</p>
+        <cite>— Fernando, Property owner, Mexico</cite>
+      </div>
+      <div class="quote-block">
+        <p>It should replace the current analytics dashboard because it's more straightforward and Expedia is telling us what to do.</p>
+        <cite>— Thea, Revenue manager</cite>
+      </div>
+    </div>
+
+    <div class="impact-note">
+      <p>The Analytics redesign is a case study in <strong>systems thinking applied to content design</strong>. The immediate deliverable was a cleaner analytics product. The real output was a reusable framework for how Expedia Group communicates data to partners — one that survived a pandemic pivot and found a second life in a different product entirely.</p>
+    </div>
+  </div>
+
+  <!-- REFLECTION -->
+  <div class="section">
+    <div class="two-col">
+      <div>
+        <p class="label">Reflection</p>
+        <h2 class="section-title">What I learned</h2>
+        <div class="divider"></div>
+      </div>
+      <div>
+        <p class="body-text">This project taught me that a content audit is as much a strategic document as a tactical one. Cataloguing what's broken isn't the point — the point is identifying the <em>pattern</em> behind the breaks, so you can fix the system rather than the symptoms.</p>
+        <p class="body-text" style="margin-top:1rem">I also learned the value of research as a content brief. The three partner modes — monitoring, deep dive, reporting — gave me a framework for every IA and copy decision for the rest of the project. When you're debating whether a metric belongs on an overview page or deeper in the hierarchy, "what mode is the partner in right now?" resolves it fast.</p>
+        <p class="body-text" style="margin-top:1rem">And building for scale meant accepting that some of the most important work would be invisible — the principles that prevented bad content decisions being made downstream, long after I'd moved on to other things.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>Elliot Crumpley</strong>
+  <a href="index.html" style="color:var(--mid)">← Back to all work</a>
+</footer>
+
+</body>
+</html>
